@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam &mdash; R Programs</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --surface-subtle: #f1f3f5;
+      --code-bg: #f6f8fa;
+      --text: #18181b;
+      --text-muted: #52525b;
+      --border: #e4e4e7;
+      --border-strong: #d4d4d8;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-text: #1d4ed8;
+      --success: #15803d;
+      --success-soft: #f0fdf4;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --tok-comment: #6b7280;
+      --tok-string: #0f766e;
+      --tok-number: #b45309;
+      --tok-keyword: #7c3aed;
+      --tok-fn: #1d4ed8;
+      --tok-op: #be123c;
+      --radius: 0.625rem;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1115;
+        --surface: #161920;
+        --surface-subtle: #1e222b;
+        --code-bg: #111318;
+        --text: #f4f4f5;
+        --text-muted: #a1a1aa;
+        --border: #27272a;
+        --border-strong: #3f3f46;
+        --accent: #60a5fa;
+        --accent-soft: #172554;
+        --accent-text: #93c5fd;
+        --success: #4ade80;
+        --success-soft: #052e16;
+        --danger: #f87171;
+        --danger-soft: #450a0a;
+        --tok-comment: #9ca3af;
+        --tok-string: #5eead4;
+        --tok-number: #fbbf24;
+        --tok-keyword: #c4b5fd;
+        --tok-fn: #93c5fd;
+        --tok-op: #fda4af;
+      }
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    body {
+      margin: 0;
+      min-block-size: 100dvb;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      inline-size: min(100% - 2rem, 58rem);
+      margin-inline: auto;
+      padding-block: 2rem 3.5rem;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .page-header {
+      margin-block-end: 1.75rem;
+      padding-block-end: 1.25rem;
+      border-block-end: 1px solid var(--border);
+    }
+
+    .title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .count-badge {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 1rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    search {
+      display: block;
+      margin-block-end: 1rem;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .filter-input {
+      flex: 1 1 16rem;
+      min-inline-size: 0;
+      min-block-size: 2.5rem;
+      padding-inline: 0.85rem;
+      padding-block: 0.45rem;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      background-color: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.9375rem;
+    }
+
+    .filter-input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .pill-nav ul {
+      display: flex;
+      flex-wrap: wrap;
+      flex-wrap: balance;
+      gap: 0.45rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-inline-size: 2.5rem;
+      min-block-size: 2rem;
+      padding-inline: 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background-color: var(--surface);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .pill:hover {
+      border-color: var(--accent);
+      background-color: var(--accent-soft);
+      color: var(--accent-text);
+    }
+
+    .pill:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .pill.is-dimmed {
+      opacity: 0.4;
+    }
+
+    .program-list {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.25rem;
+    }
+
+    .card {
+      min-inline-size: 0;
+      scroll-margin-block-start: 1.25rem;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: clip;
+    }
+
+    .card[hidden] {
+      display: none;
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding-inline: 1rem;
+      padding-block: 0.75rem;
+      background-color: var(--surface-subtle);
+      border-block-end: 1px solid var(--border);
+    }
+
+    .card-title-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.25rem 0.75rem;
+      min-inline-size: 0;
+    }
+
+    .card-title-group h2 {
+      margin: 0;
+      font-size: 1.0625rem;
+      font-weight: 700;
+    }
+
+    .card-title-group h2 code {
+      font-family: var(--mono);
+      color: var(--accent-text);
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-inline-start: auto;
+    }
+
+    .line-count {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .copy {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .copy-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      min-inline-size: 4.5rem;
+      min-block-size: 2rem;
+      padding-inline: 0.7rem;
+      padding-block: 0.3rem;
+      border: 1px solid var(--border-strong);
+      border-radius: 0.45rem;
+      background-color: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .copy-button:hover {
+      border-color: var(--accent);
+      background-color: var(--accent-soft);
+      color: var(--accent-text);
+    }
+
+    .copy-button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .copy-button .icon {
+      flex: none;
+      display: block;
+    }
+
+    .copy-button .icon-check,
+    .copy-button .icon-error {
+      display: none;
+    }
+
+    .copy-button[data-copied] {
+      border-color: var(--success);
+      background-color: var(--success-soft);
+      color: var(--success);
+    }
+
+    .copy-button[data-copied] .icon-copy {
+      display: none;
+    }
+
+    .copy-button[data-copied] .icon-check {
+      display: block;
+    }
+
+    .copy-button[data-failed] {
+      border-color: var(--danger);
+      background-color: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .copy-button[data-failed] .icon-copy {
+      display: none;
+    }
+
+    .copy-button[data-failed] .icon-error {
+      display: block;
+    }
+
+    .tip {
+      position: absolute;
+      inset-inline-end: calc(100% + 0.5rem);
+      inset-block-start: 50%;
+      transform: translateY(-50%) translateX(4px);
+      padding-inline: 0.5rem;
+      padding-block: 0.2rem;
+      border-radius: 0.375rem;
+      background-color: var(--text);
+      color: var(--surface);
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .copy-button:is([data-copied], [data-failed]) + .tip {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tip,
+      .pill,
+      .copy-button {
+        transition: opacity 0.1s linear;
+      }
+      .tip,
+      .copy-button:is([data-copied], [data-failed]) + .tip {
+        transform: translateY(-50%);
+      }
+    }
+
+    pre {
+      margin: 0;
+      padding-inline: 1rem;
+      padding-block: 0.9rem;
+      background-color: var(--code-bg);
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      tab-size: 2;
+    }
+
+    pre:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+
+    pre code {
+      font-family: inherit;
+      white-space: pre;
+    }
+
+    .tok-comment { color: var(--tok-comment); font-style: italic; }
+    .tok-string  { color: var(--tok-string); }
+    .tok-number  { color: var(--tok-number); }
+    .tok-keyword { color: var(--tok-keyword); font-weight: 600; }
+    .tok-fn      { color: var(--tok-fn); }
+    .tok-op      { color: var(--tok-op); }
+
+    .empty-state {
+      padding: 2rem 1rem;
+      text-align: center;
+      color: var(--text-muted);
+      background-color: var(--surface);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius);
+    }
+
+    .empty-state[hidden] {
+      display: none;
+    }
+
+    .page-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-block-start: 2rem;
+      padding-block-start: 1rem;
+      border-block-start: 1px solid var(--border);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .page-footer a {
+      color: var(--accent-text);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .page-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .page-footer a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="top">
+    <header class="page-header">
+      <div class="title-row">
+        <h1>R Exam Programs</h1>
+        <span class="count-badge" id="match-count" aria-live="polite">14 of 14 files</span>
+      </div>
+      <p class="subtitle">All 14 R scripts in the folder, listed with filename and source code.</p>
+
+      <search>
+        <div class="filter-bar">
+          <label class="visually-hidden" for="filter-input">Filter programs by filename or code</label>
+          <input
+            class="filter-input"
+            id="filter-input"
+            type="search"
+            placeholder="Filter by filename or code (e.g. 8a.R, mtcars, knn, dplyr)..."
+            autocomplete="off"
+          >
+        </div>
+      </search>
+
+      <nav class="pill-nav" aria-label="Jump to program file">
+        <ul>
+          <li><a class="pill" href="#file-1-r" data-target="file-1-r">1.R</a></li>
+          <li><a class="pill" href="#file-2-r" data-target="file-2-r">2.R</a></li>
+          <li><a class="pill" href="#file-3-r" data-target="file-3-r">3.R</a></li>
+          <li><a class="pill" href="#file-4-r" data-target="file-4-r">4.R</a></li>
+          <li><a class="pill" href="#file-5-r" data-target="file-5-r">5.R</a></li>
+          <li><a class="pill" href="#file-6-r" data-target="file-6-r">6.R</a></li>
+          <li><a class="pill" href="#file-7-r" data-target="file-7-r">7.R</a></li>
+          <li><a class="pill" href="#file-8-r" data-target="file-8-r">8.R</a></li>
+          <li><a class="pill" href="#file-8a-r" data-target="file-8a-r">8a.R</a></li>
+          <li><a class="pill" href="#file-9-r" data-target="file-9-r">9.R</a></li>
+          <li><a class="pill" href="#file-10-r" data-target="file-10-r">10.R</a></li>
+          <li><a class="pill" href="#file-11-r" data-target="file-11-r">11.R</a></li>
+          <li><a class="pill" href="#file-12-r" data-target="file-12-r">12.R</a></li>
+          <li><a class="pill" href="#file-13-r" data-target="file-13-r">13.R</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="program-list" id="program-list">
+      <article class="card" id="file-1-r" data-filename="1.R" data-desc="Correlation matrix (corrplot) &amp; ANOVA on iris">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-1-r"><code>1.R</code></h2>
+            <p class="card-desc">Correlation matrix (corrplot) &amp; ANOVA on iris</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">11 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-1-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 1.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-1-r" tabindex="0"><code id="code-1-r" class="language-r">install.packages(&quot;corrplot&quot;)
+library(corrplot)
+data(iris)
+iris_numeric=iris[, 1:4]
+corm=cor(iris_numeric)
+print(corm)
+corrplot(corm,method=&quot;circle&quot;)
+head(iris)
+ar=aov(Sepal.Length~Species,data=iris)
+summary(ar)
+boxplot(Sepal.Length~Species,data=iris,main=&quot;Sepal length by iris species&quot;,col=c(&quot;pink&quot;,&quot;blue&quot;,&quot;green&quot;),xlab=&quot;Species&quot;,ylab=&quot;Sepal length&quot;)</code></pre>
+      </article>
+      <article class="card" id="file-2-r" data-filename="2.R" data-desc="Logistic regression &amp; confusion matrix (caret)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-2-r"><code>2.R</code></h2>
+            <p class="card-desc">Logistic regression &amp; confusion matrix (caret)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">15 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-2-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 2.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-2-r" tabindex="0"><code id="code-2-r" class="language-r">require(foreign)
+require(MASS)
+url=&quot;https://stats.idre.ucla.edu/stat/data/binary.csv&quot;
+ad=read.csv(url)
+dim(ad)
+head(ad)
+model=glm(admit~gre+gpa+rank,data=ad,family=binomial())
+summary(model)
+fitted(model)
+predicted=ifelse(predict(model,type=&quot;response&quot;)&gt;0.5,1,0)
+print(predicted)
+install.packages(&quot;caret&quot;)
+library(caret)
+cm=confusionMatrix(data=factor(predicted),reference=factor(ad$admit),positive=&quot;1&quot;)
+print(cm)</code></pre>
+      </article>
+      <article class="card" id="file-3-r" data-filename="3.R" data-desc="Multiple linear regression on mtcars (drat, qsec, vs, am, gear)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-3-r"><code>3.R</code></h2>
+            <p class="card-desc">Multiple linear regression on mtcars (drat, qsec, vs, am, gear)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">17 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-3-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 3.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-3-r" tabindex="0"><code id="code-3-r" class="language-r">data(mtcars)
+model_all=lm(mpg~.,data=mtcars)
+summary(model_all)
+v=cor(mtcars$mpg,mtcars[, -1])
+print(v)
+model=lm(mpg~drat+qsec+vs+am+gear,data=mtcars)
+summary(model)
+par(mfrow=c(2,2))
+plot(model)
+par(mfrw=c(1,1))
+pred=predict(model)
+plot(mtcars$mpg,pred,main=&quot;Actual vs predicted&quot;,xlab=&quot;actual&quot;,ylab=&quot;Predicted&quot;,col=&quot;blue&quot;,pch=19)
+abline(0,1,col=&quot;black&quot;,lwd=2)
+coefs=coef(model)[-1]
+print(coefs)
+barplot(coefs,main=&quot;Coeffients&quot;,ylab=&quot;Coe value&quot;,col=ifelse(coefs&gt;0,&quot;pink&quot;,&quot;green&quot;))
+abline(h=0,col=&quot;black&quot;,lwd=2)</code></pre>
+      </article>
+      <article class="card" id="file-4-r" data-filename="4.R" data-desc="Multiple linear regression on mtcars (cyl, hp, wt, disp, carb)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-4-r"><code>4.R</code></h2>
+            <p class="card-desc">Multiple linear regression on mtcars (cyl, hp, wt, disp, carb)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">17 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-4-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 4.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-4-r" tabindex="0"><code id="code-4-r" class="language-r">data(mtcars)
+model_all=lm(mpg~.,data=mtcars)
+summary(model_all)
+v=cor(mtcars$mpg,mtcars[, -1])
+print(v)
+model=lm(mpg~cyl+hp+wt+disp+carb,data=mtcars)
+summary(model)
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+pred=predict(model)
+plot(mtcars$mpg,pred,main=&quot;Actual vs predicted&quot;,xlab=&quot;actual&quot;,ylab=&quot;Predicted&quot;,col=&quot;blue&quot;,pch=19)
+abline(0,1,col=&quot;black&quot;,lwd=2)
+coefs=coef(model)[-1]
+print(coefs)
+barplot(coefs,main=&quot;Coeffients&quot;,ylab=&quot;Coe value&quot;,col=ifelse(coefs&gt;0,&quot;pink&quot;,&quot;green&quot;))
+abline(h=0,col=&quot;black&quot;,lwd=2)</code></pre>
+      </article>
+      <article class="card" id="file-5-r" data-filename="5.R" data-desc="Multiple linear regression on mtcars (all predictors)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-5-r"><code>5.R</code></h2>
+            <p class="card-desc">Multiple linear regression on mtcars (all predictors)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">10 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-5-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 5.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-5-r" tabindex="0"><code id="code-5-r" class="language-r">data(mtcars)
+model_all=lm(mpg~.,data=mtcars)
+summary(model_all)
+v=cor(mtcars$mpg,mtcars[, -1])
+print(v)
+plot(model_all)
+pred=predict(model_all)
+print(pred)
+plot(mtcars$mpg,pred,main=&quot;Actual vs predicted&quot;,xlab=&quot;actual&quot;,ylab=&quot;predicted&quot;,col=&quot;blue&quot;,pch=19)
+abline(0,1,col=&quot;black&quot;,lwd=2)</code></pre>
+      </article>
+      <article class="card" id="file-6-r" data-filename="6.R" data-desc="Simple linear regression (umbrellas sold vs rainfall)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-6-r"><code>6.R</code></h2>
+            <p class="card-desc">Simple linear regression (umbrellas sold vs rainfall)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">10 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-6-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 6.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-6-r" tabindex="0"><code id="code-6-r" class="language-r">um=data.frame(R=c(10,20,30,40,50,60),U=c(15,20,25,30,40,50))
+model=lm(U~R,data=um)
+summary(model)
+pred=predict(model)
+print(pred)
+new=data.frame(R=50)
+new_pred=predict(model,new)
+print(new_pred)
+plot(um$R,um$U,main=&quot;Umbrellas sold&quot;,xlab=&quot;Rainfall&quot;,ylab=&quot;Umbrellas sold&quot;,col=&quot;green&quot;,pch=19)
+abline(model,col=&quot;red&quot;,lwd=2)</code></pre>
+      </article>
+      <article class="card" id="file-7-r" data-filename="7.R" data-desc="Multiple linear regression &amp; 3D plot (cars price)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-7-r"><code>7.R</code></h2>
+            <p class="card-desc">Multiple linear regression &amp; 3D plot (cars price)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">14 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-7-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 7.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-7-r" tabindex="0"><code id="code-7-r" class="language-r">cars=data.frame(Cid=1:5,Price=c(10,20,30,40,50),Age=c(1,2,4,5,5),Milage=c(90,78,67,45,34))
+print(cars)
+model=lm(Price~Age+Milage,data=cars)
+summary(model)
+coef(model)
+residuals(model)
+pred=predict(model)
+print(pred)
+install.packages(&quot;scatterplot3d&quot;)
+library(scatterplot3d)
+s3d=scatterplot3d(cars$Age,cars$Milage,cars$Price,main=&quot;Multiple linear regression&quot;,xlab=&quot;Age&quot;,ylab=&quot;Milage&quot;,zlab=&quot;Price&quot;,pch=19)
+s3d$plane3d(model)
+plot(cars$Price,pred,main=&quot;Actual vs predicted&quot;,xlab=&quot;actual&quot;,ylab=&quot;predicted&quot;,col=&quot;pink&quot;,pch=19)
+abline(0,1,color=&quot;red&quot;,lwd=2)</code></pre>
+      </article>
+      <article class="card" id="file-8-r" data-filename="8.R" data-desc="k-Nearest Neighbors classification (class::knn)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-8-r"><code>8.R</code></h2>
+            <p class="card-desc">k-Nearest Neighbors classification (class::knn)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">9 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-8-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 8.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-8-r" tabindex="0"><code id="code-8-r" class="language-r">install.packages(&quot;class&quot;)
+library(class)
+data=data.frame(Name=c(&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;D&quot;,&quot;E&quot;),Age=1:5,Gender=c(0,0,1,1,0),Sport=c(&quot;Cricket&quot;,&quot;Volleyball&quot;,&quot;Football&quot;,&quot;Cricket&quot;,&quot;Cricket&quot;))
+print(data)
+tp=data.frame(Age=7,Gender=1)
+tf=data[, c(&#39;Age&#39;,&#39;Gender&#39;)]
+tl=data$Sport
+pred=knn(train=tf,test=tp,cl=tl,k=3)
+print(paste(&quot;The pred sport for the test point is:&quot;,pred))</code></pre>
+      </article>
+      <article class="card" id="file-8a-r" data-filename="8a.R" data-desc="Naive Bayes classification on iris (e1071)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-8a-r"><code>8a.R</code></h2>
+            <p class="card-desc">Naive Bayes classification on iris (e1071)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">12 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-8a-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 8a.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-8a-r" tabindex="0"><code id="code-8a-r" class="language-r">install.packages(&quot;e1071&quot;)
+library(e1071)
+data(iris)
+set.seed(123)
+index=sample(1:nrow(iris),size=0.7*nrow(iris))
+td=iris[index, ]
+test=iris[-index, ]
+model=naiveBayes(Species~.,data=td)
+print(model)
+test1=test[, -5]
+pred=predict(model,test1)
+print(pred)</code></pre>
+      </article>
+      <article class="card" id="file-9-r" data-filename="9.R" data-desc="K-Means clustering &amp; clusplot on iris (k=3, k=4)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-9-r"><code>9.R</code></h2>
+            <p class="card-desc">K-Means clustering &amp; clusplot on iris (k=3, k=4)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">17 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-9-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 9.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-9-r" tabindex="0"><code id="code-9-r" class="language-r">df=iris
+head(df)
+set.seed(101)
+ic=kmeans(df[,1:4],centers=3,nstart=25)
+ic
+ic$size
+table(ic$cluster,df$Species)
+library(cluster)
+clusplot(iris,ic$cluster,color=TRUE,shade=FALSE,labels=0,line=0)
+ic=kmeans(df[,1:4],centers=4,nstart=25)
+ic
+table(ic$cluster,df$Species)
+clusplot(iris,ic$cluster,color=TRUE,shade=FALSE,labels=0,line=0)
+ic$cluster
+ic$centers
+ic$size
+ic$totss</code></pre>
+      </article>
+      <article class="card" id="file-10-r" data-filename="10.R" data-desc="Web scraping HTML elements with rvest">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-10-r"><code>10.R</code></h2>
+            <p class="card-desc">Web scraping HTML elements with rvest</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">13 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-10-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 10.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-10-r" tabindex="0"><code id="code-10-r" class="language-r">install.packages(&quot;rvest&quot;)
+library(rvest)
+url=&quot;http://www.primevideo.com&quot;
+webpage=read_html(url)
+title=webpage %&gt;% html_node(&quot;title&quot;) %&gt;% html_text()
+print(title)
+para=webpage %&gt;% html_nodes(&quot;p&quot;) %&gt;% html_text()
+print(para)
+for(text in para){cat(&quot;-&quot;,text,&quot;\n&quot;)}
+table=webpage %&gt;% html_elements(&quot;table&quot;) %&gt;% html_table()
+print(table)
+image=webpage %&gt;% html_elements(&quot;img&quot;) %&gt;% html_attr(&quot;src&quot;)
+print(image)</code></pre>
+      </article>
+      <article class="card" id="file-11-r" data-filename="11.R" data-desc="Data wrangling with dplyr &amp; tidyr">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-11-r"><code>11.R</code></h2>
+            <p class="card-desc">Data wrangling with dplyr &amp; tidyr</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">27 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-11-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 11.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-11-r" tabindex="0"><code id="code-11-r" class="language-r">install.packages(&quot;dplyr&quot;)
+library(dplyr)
+data=data.frame(Name=c(&quot;A&quot;,&quot;B&quot;,NA,&quot;C&quot;,&quot;D&quot;),Age=1:5,Sal=c(10,20,NA,40,50),City=c(&quot;Hyd&quot;,&quot;del&quot;,&quot;del&quot;,&quot;rus&quot;,&quot;NY&quot;))
+print(data)
+is.na(data)
+library(tidyr)
+replace=replace_na(data,list(Name=&quot;C&quot;,Sal=30))
+print(&quot;Replaced values:&quot;)
+print(replace)
+fil=data %&gt;% filter(City==&quot;del&quot;)
+print(&quot;Filtered rows:&quot;)
+print(fil)
+cols=data %&gt;% select(Name,Age)
+print(&quot;Selected clos:&quot;)
+print(cols)
+addcol=data %&gt;% mutate(Bonus=Sal*0.1)
+print(&quot;Added col:&quot;)
+print(addcol)
+arr=data %&gt;% arrange(Age)
+print(&quot;Age order:&quot;)
+print(arr)
+desage=data %&gt;% arrange(desc(Age))
+print(&quot;Age order:&quot;)
+print(desage)
+group=data %&gt;% group_by(City) %&gt;% summarize(Avgsal=mean(Sal))
+print(&quot;Summarize:&quot;)
+print(group)</code></pre>
+      </article>
+      <article class="card" id="file-12-r" data-filename="12.R" data-desc="Simple linear regression (hours vs score)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-12-r"><code>12.R</code></h2>
+            <p class="card-desc">Simple linear regression (hours vs score)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">11 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-12-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 12.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-12-r" tabindex="0"><code id="code-12-r" class="language-r">data=data.frame(Hours=c(1,2,3,4,5),Score=c(10,20,30,40,50))
+print(data)
+model=lm(Score~Hours,data=data)
+summary(model)
+pred=predict(model)
+print(pred)
+new=data.frame(Hours=7)
+newpre=predict(model,new)
+print(newpre)
+plot(data$Score,data$Hours,main=&quot;Linear regression&quot;,pch=19,col=&quot;blue&quot;,xlab=&quot;Score&quot;,ylab=&quot;Hours&quot;)
+abline(model,col=&quot;red&quot;,lwd=2)</code></pre>
+      </article>
+      <article class="card" id="file-13-r" data-filename="13.R" data-desc="Simple &amp; multiple linear regression (house price)">
+        <header class="card-header">
+          <div class="card-title-group">
+            <h2 id="title-13-r"><code>13.R</code></h2>
+            <p class="card-desc">Simple &amp; multiple linear regression (house price)</p>
+          </div>
+          <div class="card-actions">
+            <span class="line-count">16 lines</span>
+            <span class="copy">
+              <button type="button" class="copy-button" command="--copy" commandfor="code-13-r">
+                <svg class="icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <svg class="icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <svg class="icon icon-error" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6M9 9l6 6"></path>
+                </svg>
+                <span>Copy</span><span class="visually-hidden"> 13.R</span>
+              </button>
+              <span class="tip" role="status"></span>
+            </span>
+          </div>
+        </header>
+        <pre role="region" aria-labelledby="title-13-r" tabindex="0"><code id="code-13-r" class="language-r">data &lt;- data.frame(Area = c(1000, 1200, 1500, 1800, 2000, 2200),
+  Bed = c(2, 2, 3, 3, 4, 4),
+  Bath = c(1, 2, 2, 2, 3, 3),
+  Price = c(30, 35, 45, 50, 60, 65))
+print(data)
+model1=lm(Price~Area,data=data)
+summary(model1)
+model2=lm(Price~Area+Bed+Bath,data=data)
+summary(model1)
+pred=predict(model2,data)
+print(pred)
+new=data.frame(Area=3500,Bed=5,Bath=4)
+newpred=predict(model2,new)
+print(newpred)
+plot(data$Price,pred,main=&quot;Actual vs Predcited&quot;,xlab=&quot;actual&quot;,ylab=&quot;predict&quot;,pch=19,col=&quot;green&quot;)
+abline(0,1,col=&quot;red&quot;,lwd=2)</code></pre>
+      </article>
+      </div>
+      <p class="empty-state" id="empty-state" hidden>No matching programs found. Clear the filter to view all 14 files.</p>
+    </main>
+
+    <footer class="page-footer">
+      <span>14 R scripts indexed</span>
+      <a href="#top">Back to top</a>
+    </footer>
+  </div>
+
+  <script>
+    const timers = new WeakMap();
+    let lastMessage = '';
+
+    function legacyCopy(text) {
+      const field = Object.assign(document.createElement('textarea'), { value: text });
+      field.setAttribute('readonly', '');
+      field.style.cssText = 'position:fixed;inset-block-start:0;opacity:0';
+      document.body.append(field);
+      field.select();
+      try {
+        return document.execCommand('copy');
+      } finally {
+        field.remove();
+      }
+    }
+
+    async function copy(button, target) {
+      const text = target.matches('input, textarea')
+        ? target.value
+        : target.innerText.trim();
+      if (!text) return;
+
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(text);
+          report(button, true);
+          return;
+        } catch {
+          // Fall through to legacyCopy fallback
+        }
+      }
+
+      report(button, legacyCopy(text));
+    }
+
+    function report(button, ok) {
+      const tip = button.nextElementSibling;
+      clearTimeout(timers.get(button));
+      button.removeAttribute('data-copied');
+      button.removeAttribute('data-failed');
+
+      let message = ok ? 'Copied' : 'Copy failed';
+      if (message === lastMessage) message += '\u00A0';
+      lastMessage = message;
+
+      tip.textContent = '';
+      void button.offsetWidth;
+      button.setAttribute(ok ? 'data-copied' : 'data-failed', '');
+      requestAnimationFrame(() => {
+        tip.textContent = message;
+      });
+
+      timers.set(button, setTimeout(() => {
+        button.removeAttribute('data-copied');
+        button.removeAttribute('data-failed');
+        tip.textContent = '';
+      }, 2000));
+    }
+
+    if ('CommandEvent' in window) {
+      document.addEventListener('command', (event) => {
+        if (event.command === '--copy') copy(event.source, event.target);
+      }, true);
+    } else {
+      document.addEventListener('click', (event) => {
+        const button = event.target.closest('button[command="--copy"]');
+        if (!button) return;
+        const target = document.getElementById(button.getAttribute('commandfor'));
+        if (target) copy(button, target);
+      });
+    }
+
+    // Non-destructive R syntax highlighter (strictly preserves exact textContent)
+    const R_KEYWORDS = new Set([
+      'if', 'else', 'for', 'in', 'while', 'repeat', 'next', 'break',
+      'function', 'return', 'TRUE', 'FALSE', 'T', 'F', 'NA', 'NULL',
+      'Inf', 'NaN', 'library', 'require', 'install.packages', 'data'
+    ]);
+
+    const R_TOKEN_RE = /(#[^\n]*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_.][A-Za-z0-9_.]*(?=\s*\())|(\b[A-Za-z_.][A-Za-z0-9_.]*\b)|(%>%|<-|->|<=|>=|==|!=|[~=$])/g;
+
+    function highlightR(codeEl) {
+      const source = codeEl.textContent;
+      const frag = document.createDocumentFragment();
+      let lastIndex = 0;
+
+      for (const match of source.matchAll(R_TOKEN_RE)) {
+        const idx = match.index;
+        if (idx > lastIndex) {
+          frag.append(document.createTextNode(source.slice(lastIndex, idx)));
+        }
+
+        const [full, comment, str, num, fn, ident, op] = match;
+        let cls = '';
+        if (comment) cls = 'tok-comment';
+        else if (str) cls = 'tok-string';
+        else if (num) cls = 'tok-number';
+        else if (fn) cls = R_KEYWORDS.has(fn) ? 'tok-keyword' : 'tok-fn';
+        else if (ident && R_KEYWORDS.has(ident)) cls = 'tok-keyword';
+        else if (op) cls = 'tok-op';
+
+        if (cls) {
+          const span = document.createElement('span');
+          span.className = cls;
+          span.textContent = full;
+          frag.append(span);
+        } else {
+          frag.append(document.createTextNode(full));
+        }
+
+        lastIndex = idx + full.length;
+      }
+
+      if (lastIndex < source.length) {
+        frag.append(document.createTextNode(source.slice(lastIndex)));
+      }
+
+      codeEl.replaceChildren(frag);
+    }
+
+    document.querySelectorAll('pre code.language-r').forEach(highlightR);
+
+    // Filter by filename, description, or code contents
+    const filterInput = document.getElementById('filter-input');
+    const cards = [...document.querySelectorAll('.card')];
+    const pills = [...document.querySelectorAll('.pill')];
+    const matchCount = document.getElementById('match-count');
+    const emptyState = document.getElementById('empty-state');
+
+    function applyFilter() {
+      const query = filterInput.value.trim().toLowerCase();
+      let visible = 0;
+      const visibleIds = new Set();
+
+      for (const card of cards) {
+        const filename = card.dataset.filename.toLowerCase();
+        const desc = card.dataset.desc.toLowerCase();
+        const code = card.querySelector('code').textContent.toLowerCase();
+        const matched = !query || filename.includes(query) || desc.includes(query) || code.includes(query);
+        card.hidden = !matched;
+        if (matched) {
+          visible++;
+          visibleIds.add(card.id);
+        }
+      }
+
+      for (const pill of pills) {
+        pill.classList.toggle('is-dimmed', Boolean(query) && !visibleIds.has(pill.dataset.target));
+      }
+
+      matchCount.textContent = `${visible} of ${cards.length} files`;
+      emptyState.hidden = visible > 0;
+    }
+
+    filterInput.addEventListener('input', applyFilter);
+
+    // If user clicks a pill for a card currently hidden by search, clear filter first
+    document.querySelector('.pill-nav').addEventListener('click', (event) => {
+      const pill = event.target.closest('a.pill');
+      if (!pill) return;
+      const targetCard = document.getElementById(pill.dataset.target);
+      if (targetCard && targetCard.hidden) {
+        filterInput.value = '';
+        applyFilter();
+      }
+    });
+  </script>
+</body>
+</html>

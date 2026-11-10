@@ -1,0 +1,11 @@
+install.packages("corrplot")
+library(corrplot)
+data(iris)
+iris_numeric=iris[, 1:4]
+corm=cor(iris_numeric)
+print(corm)
+corrplot(corm,method="circle")
+head(iris)
+ar=aov(Sepal.Length~Species,data=iris)
+summary(ar)
+boxplot(Sepal.Length~Species,data=iris,main="Sepal length by iris species",col=c("pink","blue","green"),xlab="Species",ylab="Sepal length")

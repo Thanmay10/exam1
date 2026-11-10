@@ -1,0 +1,17 @@
+df=iris
+head(df)
+set.seed(101)
+ic=kmeans(df[,1:4],centers=3,nstart=25)
+ic
+ic$size
+table(ic$cluster,df$Species)
+library(cluster)
+clusplot(iris,ic$cluster,color=TRUE,shade=FALSE,labels=0,line=0)
+ic=kmeans(df[,1:4],centers=4,nstart=25)
+ic
+table(ic$cluster,df$Species)
+clusplot(iris,ic$cluster,color=TRUE,shade=FALSE,labels=0,line=0)
+ic$cluster
+ic$centers
+ic$size
+ic$totss
